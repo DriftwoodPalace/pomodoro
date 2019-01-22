@@ -4,7 +4,6 @@ from PySide2.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton,QVBo
 from PySide2.QtCore import *
 from PySide2.QtGui import QIcon, QFont
 
-
 class Form(QDialog):
 
     def __init__(self, parent=None):
