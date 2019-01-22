@@ -1,6 +1,6 @@
 import datetime
 import sys
-from PySide2.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton,QVBoxLayout, QDialog, QLabel, QSlider, QLCDNumber, QMessageBox, QSystemTrayIcon, QToolButton  
+from PySide2.QtWidgets import QApplication, QDialog, QLineEdit, QPushButton,QVBoxLayout, QDialog, QLabel, QSlider, QLCDNumber, QMessageBox, QSystemTrayIcon, QToolButton, QMenu  
 from PySide2.QtCore import *
 from PySide2.QtGui import QIcon, QFont
 
@@ -63,6 +63,10 @@ class Form(QDialog):
         self.systemtray_icon = QSystemTrayIcon(QIcon("snake.png"))
         self.systemtray_icon.show()
         self.systemtray_icon.activated.connect(self.icon_activated)
+        self.menu = QMenu(parent)
+        self.exit_action = self.menu.addAction("Exit")
+        self.systemtray_icon.setContextMenu(self.menu)
+        self.exit_action.triggered.connect(self.slot_exit)
         # Add signals
         self.slider.valueChanged.connect(self.count_func)
         self.slider2.valueChanged.connect(self.count_func)
@@ -77,6 +81,9 @@ class Form(QDialog):
     def closeEvent(self, event):
         self.hide()
         event.ignore()
+
+    def slot_exit(self):
+        QApplication.exit(0)
 
     def first_display(self):
         minute = str(self.slider.sliderPosition())
@@ -164,12 +171,12 @@ class Form(QDialog):
 
     def taskbar_rest(self):
         if self.taskbar_count == 0:
-            systemtray_icon.showMessage("PAUSE", "Time to rest", QSystemTrayIcon.Information, 100000)
+            self.systemtray_icon.showMessage("PAUSE", "Time to rest!", QSystemTrayIcon.Information, 500000)
             self.taskbar_count = 1
 
     def taskbar_work(self):
         if self.taskbar2_count == 0:
-            systemtray_icon.showMessage("WORK", "Rest over, time to work again?", QSystemTrayIcon.Information, 100000)
+            self.systemtray_icon.showMessage("WORK", "Break over!", QSystemTrayIcon.Information, 500000)
             self.taskbar2_count = 1
 
     def stop(self):
@@ -188,6 +195,7 @@ class Form(QDialog):
         self.text2.show()
         self.lcd2.show()
         self.slider2.show()
+        self.show()
         self.taskbar_count = 0
         self.taskbar2_count = 0
 
@@ -197,6 +205,7 @@ if __name__ == '__main__':
     # Create the Qt Application
     app = QApplication(sys.argv)
     # Create and show the form
+    app.setQuitOnLastWindowClosed(False)
     form = Form()
     form.show()
     # Run the main Qt loop
