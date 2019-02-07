@@ -7,6 +7,7 @@ from PySide2.QtGui import QIcon, QFont
 class Form(QDialog):
 
     def __init__(self, parent=None):
+        self.round = 0
         self.lcd = QLCDNumber(5)
         self.lcd2 = QLCDNumber(5)
         self.clock = QLCDNumber(5)
@@ -27,12 +28,14 @@ class Form(QDialog):
         self.text2 = QLabel("How long should the rest period be?")
         self.work = QLabel("WORK")
         self.pause = QLabel("REST")
+        self.rounds = QLabel("Number of rounds: " + str(self.round))
         self.work.setAlignment(Qt.AlignHCenter)
         self.work.setFont(QFont("Times", 18, QFont.Bold))
         self.pause.setAlignment(Qt.AlignHCenter)
         self.pause.setFont(QFont("Times", 18, QFont.Bold))
         self.button = QPushButton("Start timer")
         self.button2 = QPushButton("Stop timer")
+        self.reset = QPushButton("Reset rounds")
         self.lcd.display("25:00")
         self.lcd2.display("05:00")
         mins = 25
@@ -58,6 +61,8 @@ class Form(QDialog):
         layout.addWidget(self.work)
         layout.addWidget(self.pause)
         layout.addWidget(self.clock)
+        layout.addWidget(self.rounds)
+        layout.addWidget(self.reset)
         # Set dialog layout
         self.setLayout(layout)
         self.systemtray_icon = QSystemTrayIcon(QIcon("snake.png"))
@@ -72,7 +77,17 @@ class Form(QDialog):
         self.slider2.valueChanged.connect(self.count_func)
         self.button.clicked.connect(self.button_update)
         self.button.clicked.connect(self.timer_func)
+        self.button.clicked.connect(self.round_count)
         self.button2.clicked.connect(self.stop)
+        self.reset.clicked.connect(self.reset_rounds)
+
+    def reset_rounds(self):
+        self.round = 0
+        self.rounds.setText("Number of rounds: " + str(self.round))
+    
+    def round_count(self):
+        self.round += 1
+        self.rounds.setText("Number of rounds: " + str(self.round))
     
     def icon_activated(self, reason):
         if reason in (QSystemTrayIcon.Trigger, QSystemTrayIcon.DoubleClick):
@@ -167,6 +182,7 @@ class Form(QDialog):
         self.text2.hide()
         self.lcd2.hide()
         self.slider2.hide()
+        self.reset.hide()
         self.clock.show()
         self.button2.show()
         self.work.show()
@@ -197,6 +213,7 @@ class Form(QDialog):
         self.text2.show()
         self.lcd2.show()
         self.slider2.show()
+        self.reset.show()
         self.show()
         self.taskbar_count = 0
         self.taskbar2_count = 0
