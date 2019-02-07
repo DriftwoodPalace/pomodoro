@@ -135,6 +135,8 @@ class Form(QDialog):
             show =  self.pause.show()
             minute, second = divmod(self.rest, 60)
             zero = "0"
+            if self.rest == self.slider2.value() * 60:
+                self.show()
             if second < 10 and minute < 10:
                 self.clock.display(zero + str(minute) + ":" + zero + str(second))
             elif second < 10:
@@ -200,7 +202,6 @@ class Form(QDialog):
         self.taskbar2_count = 0
 
 
-
 if __name__ == '__main__':
     # Create the Qt Application
     app = QApplication(sys.argv)
@@ -210,4 +211,3 @@ if __name__ == '__main__':
     form.show()
     # Run the main Qt loop
     sys.exit(app.exec_())
-
